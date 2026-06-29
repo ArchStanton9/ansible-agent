@@ -10,29 +10,29 @@ adds a sudoers rule for passwordless `sudo`.
 
 Running a public script as root through `curl | sh` or `wget | sh` is convenient,
 but it is also equivalent to giving that script full control over the server.
-Inspect the script before running it, and prefer pinning the URL to a reviewed
-commit or tag instead of always using `main`.
+Inspect the script before running it. The examples below are pinned to the
+reviewed `1.0.1` tag instead of the moving `main` branch.
 
 ## Usage
 
 Review the script first:
 
 ```sh
-SCRIPT_URL="https://raw.githubusercontent.com/ArchStanton9/ansible-agent/main/bootstrap-ansible-user.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/ArchStanton9/ansible-agent/1.0.1/bootstrap-ansible-user.sh"
 curl -fsSL "$SCRIPT_URL"
 ```
 
 Run it as `root` with `curl`:
 
 ```sh
-SCRIPT_URL="https://raw.githubusercontent.com/ArchStanton9/ansible-agent/main/bootstrap-ansible-user.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/ArchStanton9/ansible-agent/1.0.1/bootstrap-ansible-user.sh"
 curl -fsSL "$SCRIPT_URL" | sh
 ```
 
 Or run it as `root` with `wget`:
 
 ```sh
-SCRIPT_URL="https://raw.githubusercontent.com/ArchStanton9/ansible-agent/main/bootstrap-ansible-user.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/ArchStanton9/ansible-agent/1.0.1/bootstrap-ansible-user.sh"
 wget -qO- "$SCRIPT_URL" | sh
 ```
 
