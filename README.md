@@ -5,5 +5,5 @@ Creates an `ansible` user with SSH access and passwordless sudo for my VPS boots
 Run as `root`:
 
 ```sh
-curl -fsSL "https://raw.githubusercontent.com/ArchStanton9/ansible-agent/1.0.1/bootstrap-ansible-user.sh" | sh
+curl -fsSL "https://raw.githubusercontent.com/ArchStanton9/ansible-agent/1.0.2/bootstrap-ansible-user.sh" | sh
 ```

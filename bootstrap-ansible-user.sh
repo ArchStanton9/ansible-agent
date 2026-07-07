@@ -1,6 +1,9 @@
 #!/bin/sh
 set -eu
 
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin${PATH:+:$PATH}"
+export PATH
+
 ANSIBLE_USER="${ANSIBLE_USER:-ansible}"
 ANSIBLE_SSH_KEY="${ANSIBLE_SSH_KEY:-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpk6Yd/5yIDQDKEL5v0VVAmpbSiP5iXn+tYCku8aA09 ansible}"
 INSTALL_SUDO="${INSTALL_SUDO:-auto}"
