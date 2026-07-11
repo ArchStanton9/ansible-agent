@@ -5,6 +5,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin${PATH:+:$PATH
 export PATH
 
 ANSIBLE_USER="${ANSIBLE_USER:-ansible}"
+ANSIBLE_UID=1001
 ANSIBLE_SSH_KEY="${ANSIBLE_SSH_KEY:-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpk6Yd/5yIDQDKEL5v0VVAmpbSiP5iXn+tYCku8aA09 ansible}"
 INSTALL_SUDO="${INSTALL_SUDO:-auto}"
 
@@ -90,6 +91,18 @@ get_user_home() {
   awk -F: -v name="$ANSIBLE_USER" '$1 == name { print $6; exit }' /etc/passwd
 }
 
+ensure_user_uid() {
+  uid_owner="$(awk -F: -v uid="$ANSIBLE_UID" '$3 == uid { print $1; exit }' /etc/passwd)"
+
+  if id "$ANSIBLE_USER" >/dev/null 2>&1; then
+    actual_uid="$(id -u "$ANSIBLE_USER")"
+    [ "$actual_uid" = "$ANSIBLE_UID" ] || die "user '$ANSIBLE_USER' has UID $actual_uid; expected $ANSIBLE_UID"
+    return
+  fi
+
+  [ -z "$uid_owner" ] || die "UID $ANSIBLE_UID is already in use by '$uid_owner'"
+}
+
 create_user() {
   user_shell="$(select_shell)"
 
@@ -101,12 +114,12 @@ create_user() {
   log "creating user '$ANSIBLE_USER'"
 
   if command -v useradd >/dev/null 2>&1; then
-    useradd -m -s "$user_shell" "$ANSIBLE_USER"
+    useradd -m -u "$ANSIBLE_UID" -s "$user_shell" "$ANSIBLE_USER"
   elif command -v adduser >/dev/null 2>&1; then
     if adduser --help 2>&1 | grep -q -- '--disabled-password'; then
-      adduser --disabled-password --gecos "" --shell "$user_shell" "$ANSIBLE_USER"
+      adduser --disabled-password --gecos "" --shell "$user_shell" --uid "$ANSIBLE_UID" "$ANSIBLE_USER"
     else
-      adduser -D -s "$user_shell" "$ANSIBLE_USER"
+      adduser -D -s "$user_shell" -u "$ANSIBLE_UID" "$ANSIBLE_USER"
     fi
   else
     die "neither useradd nor adduser was found"
@@ -171,6 +184,7 @@ configure_sudoers() {
 
 require_root
 validate_user_name
+ensure_user_uid
 install_sudo
 create_user
 lock_password
